@@ -1,0 +1,29 @@
+[project]
+name = "rag"
+version = "0.1.0"
+description = "Retrieval-Augmented Generation over the vLLM 0.10.1 source tree."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+    "fire>=0.6",
+    "tqdm>=4.66",
+]
+
+[dependency-groups]
+dev = [
+    "flake8>=7.0",
+    "mypy>=1.10",
+    "pytest>=8.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+exclude = ['\.venv/', 'data/']
+
+[flake8]
+exclude = ['.venv', 'data', '__pycache__']
