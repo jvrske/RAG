@@ -94,3 +94,9 @@ class StudentSearchResultsAndAnswer(BaseModel):
 
     search_results: List[MinimalAnswer]
     k: int
+
+
+class Chunk(MinimalSource):
+    """A passage of one file, with its text, as produced by chunking."""
+
+    text: str
