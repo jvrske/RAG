@@ -8,6 +8,7 @@ dependencies = [
     "pydantic>=2.0",
     "fire>=0.6",
     "tqdm>=4.66",
+    "bm25s>=0.3.12",
 ]
 
 [dependency-groups]

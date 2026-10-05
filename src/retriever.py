@@ -1,9 +1,12 @@
-import re
+import bm25s
 
 
-def tokenize(text: str) -> list[str]:
-    return re.findall(r"[a-z0-9]+", text.lower())
+def build_index(chunks):
+    tokens = bm25s.tokenize([c.text for c in chunks], stopwords=None)
+    retriever = bm25s.BM25()
+    retriever.index(tokens)
+    return retriever
 
-
-def score(query_tokens: list[str], chunk_tokens: list[str]) -> float:
-    return len(set(query_tokens) & set(chunk_tokens))
+def search(query, k, chunks, retriever):
+    idx, _ = retriever.retrieve(bm25s.tokenize(query, stopwords=None), k=k)
+    return [chunks[i] for i in idx[0]]
