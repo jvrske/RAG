@@ -1,7 +1,6 @@
 """BM25 retrieval over the indexed chunks, backed by the bm25s library."""
 
 import bm25s
-
 from src.models import Chunk, MinimalSource
 
 
@@ -17,6 +16,7 @@ def build_index(chunks: list[Chunk]) -> bm25s.BM25:
     such as trust_remote_code whole. Splitting them measurably halves
     recall on the code dataset.
     """
+
     tokens = bm25s.tokenize([chunk.text for chunk in chunks])
     retriever = bm25s.BM25()
     retriever.index(tokens)
@@ -30,5 +30,7 @@ def search(query: str, k: int, chunks: list[Chunk],
     Always returns k results, even when nothing matches: bm25s fills
     the ranking with zero-scored documents rather than returning fewer.
     """
-    indices, _ = retriever.retrieve(bm25s.tokenize(query), k=k)
+
+    indices, _ = retriever.retrieve(bm25s.tokenize(query, show_progress=False),
+                                    k=k, show_progress=False)
     return [chunks[int(i)] for i in indices[0]]

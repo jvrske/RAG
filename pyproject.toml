@@ -28,3 +28,7 @@ exclude = ['\.venv/', 'data/']
 
 [flake8]
 exclude = ['.venv', 'data', '__pycache__']
+
+[[tool.mypy.overrides]]
+module = ["bm25s.*"]
+ignore_missing_imports = true
