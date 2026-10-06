@@ -10,7 +10,8 @@ debug:
 	uv run python -m pdb -m src
 
 clean:
-	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+	rm -rf data/processed
+	find . -type d -name __pycache__ -exec rm -rf {} +
 	rm -rf .mypy_cache .pytest_cache
 
 lint:

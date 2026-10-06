@@ -31,6 +31,7 @@ def search(query: str, k: int, chunks: list[Chunk],
     the ranking with zero-scored documents rather than returning fewer.
     """
 
-    indices, _ = retriever.retrieve(bm25s.tokenize(query, show_progress=False),
-                                    k=k, show_progress=False)
-    return [chunks[int(i)] for i in indices[0]]
+    query_tokens = bm25s.tokenize(query, show_progress=False)
+    indices, scores = retriever.retrieve(query_tokens, k=k,
+                                         show_progress=False)
+    return [chunks[int(i)] for i, s in zip(indices[0], scores[0]) if s > 0]

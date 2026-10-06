@@ -14,6 +14,7 @@ from src import corpus
 from src.chunking import chunk_markdown, chunk_text
 from src.models import Chunk
 from src.retriever import build_index
+from tqdm import tqdm
 
 SRC = Path(__file__).resolve().parent
 ROOT = SRC.parent
@@ -34,7 +35,7 @@ def build(max_chunk_size: int = 2000) -> tuple[list[Chunk], bm25s.BM25]:
     crpus = corpus.build()
     chunks = []
 
-    for path, text in crpus:
+    for path, text in tqdm(crpus, desc="chunking"):
         if path.endswith(".md"):
             chunks.extend(chunk_markdown(path, text, max_chunk_size))
         else:
