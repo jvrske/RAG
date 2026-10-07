@@ -6,6 +6,7 @@ from tqdm import tqdm
 from src import indexer
 from src.models import MinimalSearchResults, RagDataset, StudentSearchResults
 from src.retriever import search as search_chunks
+from src.evaluation import recall_at_k
 
 
 def index(max_chunk_size: int = 2000) -> None:
@@ -121,16 +122,24 @@ def answer_dataset(student_search_results_path: str,
 def evaluate(student_search_results_path: str, dataset_path: str) -> None:
     """Report our own recall@k against a ground-truth dataset."""
 
-    # try:
-    #     with open(dataset_path, encoding="utf-8") as f:
-    #         ...
-    # except FileNotFoundError:
-    #     print(f"Error: file not found: {dataset_path}")
-    #     return
+    try:
+        with open(student_search_results_path, encoding="utf-8") as f:
+            student = StudentSearchResults(**json.load(f))
 
-    print(f"[evaluate] "
-          f"student_search_results_path={student_search_results_path} "
-          f"dataset_path={dataset_path}")
+        with open(dataset_path, encoding="utf-8") as f:
+            data_set = RagDataset(**json.load(f))
+
+    except (FileNotFoundError, json.JSONDecodeError, ValidationError) as e:
+        print(f"Error: {e}")
+        return
+
+    try:
+        recall = recall_at_k(student, data_set)
+    except ValueError as e:
+        print(f"Error: {e}")
+        return
+
+    print(f"recall@{student.k} = {recall:.4f}")
 
 
 fire.Fire({"index": index, "search": search,

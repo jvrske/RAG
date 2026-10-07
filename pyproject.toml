@@ -9,6 +9,8 @@ dependencies = [
     "fire>=0.6",
     "tqdm>=4.66",
     "bm25s>=0.3.12",
+    "transformers>=5.19.0",
+    "torch>=2.14.1",
 ]
 
 [dependency-groups]
