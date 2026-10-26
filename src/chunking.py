@@ -1,16 +1,3 @@
-"""Cutting of corpus files into the chunks the search actually ranks.
-
-A whole file is too coarse to be a search result: the passage that answers a
-question is a few percent of it, so returning the file dilutes the IoU below
-the grader's threshold — and anything over 2000 characters invalidates the
-submission outright.
-
-Every chunk keeps the invariant that its text is exactly
-original_text[first_character_index:last_character_index]. The indices are
-positions in the whole file, never inside the chunk, because they are handed
-to the grader as-is.
-"""
-
 from src.models import Chunk
 
 MAX_CHUNK_SIZE = 2000
@@ -64,6 +51,7 @@ def find_headings(text: str) -> list[int]:
     A heading is a line starting with '#' that is not inside a fenced
     code block, where '#' opens a comment instead.
     """
+
     pos = 0
     result = []
     in_code_block = False
@@ -86,6 +74,7 @@ def find_sections(text: str,
     section of its own. Sections shorter than min_section_size are merged
     into the following one, so a bare heading is never a chunk by itself.
     """
+
     bounds = find_headings(text)
     if not bounds or bounds[0] != 0:
         bounds = [0] + bounds
@@ -113,6 +102,7 @@ def chunk_markdown(file_path: str,
     fall back to chunk_text, whose indices are shifted back into the
     file's own coordinates.
     """
+
     chunks = []
     for start, end in find_sections(text):
         section = text[start:end]

@@ -5,6 +5,7 @@ from pathlib import Path
 from tqdm import tqdm
 from src import indexer
 from src.models import MinimalSearchResults, RagDataset, StudentSearchResults
+from src.models import MinimalAnswer, StudentSearchResultsAndAnswer
 from src.retriever import search as search_chunks
 from src.evaluation import recall_at_k
 
@@ -107,16 +108,59 @@ def answer(query: str, k: int = 10) -> None:
         print("Error: query is empty")
         return
 
-    print(f"[answer] query={query!r} k={k}")
+    from src import generator
+
+    try:
+        chunks, retriever = indexer.load()
+    except (FileNotFoundError, json.JSONDecodeError) as error:
+        print(f"Error: {error}")
+        return
+
+    sources = search_chunks(query, k, chunks, retriever)
+    response = generator.generate(query, sources)
+
+    print(f"{response}\n")
+    for n, source in enumerate(sources, 1):
+        print(f"[{n}] {source.file_path} "
+              f"[{source.first_character_index}, "
+              f"{source.last_character_index}]")
 
 
 def answer_dataset(student_search_results_path: str,
                    save_directory: str) -> None:
     """Generate an answer for every question of a search-results file."""
 
-    print(f"[answer_dataset] "
-          f"student_search_results_path={student_search_results_path} "
-          f"save_directory={save_directory}")
+    try:
+        with open(student_search_results_path, encoding="utf-8") as f:
+            student = StudentSearchResults(**json.load(f))
+    except (FileNotFoundError, json.JSONDecodeError, ValidationError) as e:
+        print(f"Error: {e}")
+        return
+
+    from src import generator
+
+    answers = []
+
+    for item in tqdm(student.search_results, desc="answering"):
+        response = generator.generate(item.question, item.retrieved_sources)
+        answers.append(MinimalAnswer(
+            question_id=item.question_id,
+            question=item.question,
+            retrieved_sources=item.retrieved_sources,
+            answer=response,
+        ))
+
+    student_answers = StudentSearchResultsAndAnswer(
+        k=student.k, search_results=answers)
+
+    directory = Path(save_directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    stem = Path(student_search_results_path).stem
+    output_path = directory / f"{stem}_answers.json"
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(student_answers.model_dump(), f, indent=2)
+
+    print(f"Wrote {len(answers)} answers to {output_path}")
 
 
 def evaluate(student_search_results_path: str, dataset_path: str) -> None:

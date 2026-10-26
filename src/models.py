@@ -1,11 +1,3 @@
-"""Pydantic models for every JSON boundary of the RAG pipeline.
-
-The school's datasets are read into RagDataset, our submissions are built as
-StudentSearchResults and StudentSearchResultsAndAnswer. Validating at these
-boundaries means a malformed source raises where it is built, not six minutes
-later inside the grader.
-"""
-
 from pydantic import BaseModel, Field, model_validator
 from typing import List
 import uuid

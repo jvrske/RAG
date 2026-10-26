@@ -1,5 +1,3 @@
-"""BM25 retrieval over the indexed chunks, backed by the bm25s library."""
-
 import bm25s
 from src.models import Chunk, MinimalSource
 

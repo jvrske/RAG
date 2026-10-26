@@ -1,12 +1,3 @@
-"""Building the search index and keeping it on disk between commands.
-
-Each CLI command runs in its own process, so nothing survives in memory
-from one to the next: index must write what search will read back. Two
-things are stored side by side, and they only make sense together — the
-BM25 index ranks positions, and the chunk list is what turns a position
-into a file path and a character range.
-"""
-
 import json
 import bm25s
 from pathlib import Path

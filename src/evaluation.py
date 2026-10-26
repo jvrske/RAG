@@ -1,12 +1,3 @@
-"""My own recall@k, so the pipeline can be measured without the grader.
-
-A retrieved source counts as a hit when it names the same file as the
-gold source and overlaps it by at least IOU_THRESHOLD, the same rule
-the subject states. Nothing here imports or shells out to the
-moulinette: the grader is the exam, this module is the ruler we use
-while building.
-"""
-
 from src.models import (AnsweredQuestion, MinimalSearchResults,
                         MinimalSource, RagDataset, StudentSearchResults)
 

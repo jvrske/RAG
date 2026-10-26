@@ -1,14 +1,3 @@
-"""Loading of the raw corpus from disk.
-
-Walks the vLLM source tree under data/raw/ and hands every indexable file
-to the rest of the pipeline as plain text, paired with the exact path
-string the grader compares against.
-
-Character indices are only meaningful relative to how a file was read, so
-every file goes through the same reader (UTF-8, text mode). Changing that
-here shifts every index the project produces.
-"""
-
 from pathlib import Path
 
 SRC = Path(__file__).resolve().parent
